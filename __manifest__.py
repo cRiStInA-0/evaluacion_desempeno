@@ -15,6 +15,11 @@
  'views/evaluacion_desempeno_views.xml', # Vista del módulo,
  'security/security.xml' #Reglas 
  ],
+ 'assets': {
+    'web.assets_backend': [
+        '/gestion_tareas/static/src/css/styles.css',
+    ],
+ },
  'installable': True,
  'application': True,
 }
