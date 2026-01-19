@@ -12,7 +12,8 @@
  'icon': '/evaluacion_desempeno/static/description/icon53.png',
  'data': [
  'security/ir.model.access.csv', # Control de acceso
- 'views/evaluacion_desempeno_views.xml', # Vista del módulo
+ 'views/evaluacion_desempeno_views.xml', # Vista del módulo,
+ 'security/security.xml' #Reglas 
  ],
  'installable': True,
  'application': True,
