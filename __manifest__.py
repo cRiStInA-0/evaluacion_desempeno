@@ -12,12 +12,11 @@
  'icon': '/evaluacion_desempeno/static/description/icon53.png',
  'data': [
  'security/ir.model.access.csv', # Control de acceso
- 'views/evaluacion_desempeno_views.xml', # Vista del módulo,
- 'security/security.xml' #Reglas 
+ 'views/evaluacion_desempeno_views.xml' # Vista del módulo,
  ],
  'assets': {
     'web.assets_backend': [
-        '/gestion_tareas/static/src/css/styles.css',
+        'evaluacion_desempeno/static/src/css/style.css',
     ],
  },
  'installable': True,

@@ -6,6 +6,8 @@ class EvaluacionDesempeno(models.Model):
  _description = 'Evaluación de desempeño'
  title = fields.Char(string='Título de la evaluación', required=True)
  employee_evaluated = fields.Many2one('hr.employee', string='Empleado evaluado',required=True)
+ employee_name = fields.Char(string="Empleado",related="employee_evaluated.name",
+    store=True)
  comments = fields.Text(string='Comentarios del evaluador')
  deadline = fields.Date(string='Fecha de evaluación', required=True)
  state = fields.Selection([

@@ -1,6 +1,8 @@
 <odoo>
 
-    <!-- Vista de Formulario -->
+
+    <!-- VISTA FORMULARIO -->
+
     <record id="view_evaluacion_desempeno_form" model="ir.ui.view">
         <field name="name">evaluacion.desempeno.form</field>
         <field name="model">evaluacion.desempeno</field>
@@ -20,90 +22,125 @@
         </field>
     </record>
 
-    <!-- Vista Kanban -->
+    <!-- VISTA KANBAN -->
     <record id="view_evaluacion_desempeno_kanban" model="ir.ui.view">
-        <field name="name">evaluacion.desempeno.kanban</field>
-        <field name="model">evaluacion.desempeno</field>
-        <field name="arch" type="xml">
-            <kanban>
-                <field name="title"/>
-                <field name="employee_evaluated"/>
-                <field name="comments"/>
-                <field name="deadline"/>
-                <field name="state"/>
-                <field name="score"/>
+    <field name="name">evaluacion.desempeno.kanban</field>
+    <field name="model">evaluacion.desempeno</field>
+    <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column">
+            <!-- CAMPOS OBLIGATORIOS -->
+            <field name="title"/>
+            <field name="employee_evaluated"/>
+            <field name="comments"/>
+            <field name="deadline"/>
+            <field name="state"/>
+            <field name="score"/>
 
-                <templates>
-                    <t t-name="kanban-box">
-                        <div class="o_kanban_record evaluacion_desmpeno_kanban"> <!-- Clase específica --> 
-                            <div>
-                                <strong>
-                                    <span t-esc="record.title.value"/>
-                                </strong>
-                            </div>
+            <templates>
+                <t t-name="kanban-box">
+                    <div class="o_kanban_record evaluacion_desempeno_kanban">
 
-                            <div>
-                                <span t-esc="record.employee_evaluated.value and record.employee_evaluated.value[1]"/>
-                            </div>
-
-                            <div>
-                                <span t-esc="record.comments.value or 'Sin comentarios'"/>
-                            </div>
-
-                            <div>
-                                <span t-esc="record.deadline.value"/>
-                            </div>
-
-                            <div>
-                                <span t-esc="record.state.value"/>
-                            </div>
-
-                            <div>
-                                <span>Puntuación: </span>
-                                <span t-esc="record.score.value"/>
-                            </div>
-
-                            <div>
-                                <!-- Botón para eliminar el registro -->
-                                <button
-                                    name="unlink"
-                                    type="object"
-                                    class="btn btn-danger"
-                                    string="Eliminar"
-                                />
-                            </div>
+                        <div>
+                            <strong>
+                                <t t-esc="record.title.value"/>
+                            </strong>
                         </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
 
-    <!-- Acción para abrir las vistas -->
-    <record id="action_evaluacion_desempenos" model="ir.actions.act_window">
-        <field name="name">Gestión de evaluación de desempeños</field>
+                        <div>
+                            <span t-esc="record.employee_evaluated.value"/>
+                        </div>
+
+                        <div>
+                            <t t-esc="record.comments.value or 'Sin comentarios'"/>
+                        </div>
+
+                        <div>
+                            <t t-esc="record.deadline.value"/>
+                        </div>
+
+                        <div>
+                            <t t-esc="record.state.value"/>
+                        </div>
+
+                        <div>
+                            <strong>Puntuación:</strong>
+                            <t t-esc="record.score.value"/>
+                        </div>
+
+                        <div groups="hr.group_hr_manager,base.group_system">
+                            <button
+                                name="unlink"
+                                type="object"
+                                class="btn btn-danger"
+                                string="Eliminar"/>
+                        </div>
+
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+
+    <!-- ACCIÓN RRHH / ADMIN -->
+    <record id="action_evaluacion_desempenos_hr" model="ir.actions.act_window">
+        <field name="name">Evaluaciones de desempeño</field>
         <field name="res_model">evaluacion.desempeno</field>
         <field name="view_mode">kanban,form</field>
-        <field name="help" type="html">
-            <p>
-                Crea y organiza evaluaciones de desempeños realizados a empleados.
-            </p>
-        </field>
+        <field name="groups_id" eval="[
+            (4, ref('hr.group_hr_manager')),
+            (4, ref('base.group_system'))
+        ]"/>
     </record>
 
-    <!-- Menú en la raíz -->
+
+    <!-- ACCIÓN EMPLEADOS -->
+
+    <record id="action_evaluacion_desempenos_employee" model="ir.actions.act_window">
+        <field name="name">Mis evaluaciones</field>
+        <field name="res_model">evaluacion.desempeno</field>
+        <field name="view_mode">kanban,form</field>
+
+        <!-- SOLO SUS EVALUACIONES -->
+        <field name="domain">
+            [('employee_evaluated.user_id', '=', uid)]
+        </field>
+
+        <!-- SOLO LECTURA -->
+        <field name="context">
+            {'create': False, 'edit': False, 'delete': False}
+        </field>
+
+        <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+
+    <!-- MENÚS -->
     <menuitem
         id="menu_evaluacion_desempenos_module_root"
         name="Gestión de evaluación de desempeños"
         sequence="10"
     />
 
+    <!-- Menú RRHH / Admin -->
     <menuitem
-        id="menu_evaluacion_desempenos_module"
-        name="Desempeños"
+        id="menu_evaluacion_desempenos_hr"
+        name="Evaluaciones"
         parent="menu_evaluacion_desempenos_module_root"
-        action="action_evaluacion_desempenos"
+        action="action_evaluacion_desempenos_hr"
+        groups="hr.group_hr_manager,base.group_system"
         sequence="10"
+    />
+
+    <!-- Menú Empleados -->
+    <menuitem
+        id="menu_evaluacion_desempenos_employee"
+        name="Mis evaluaciones"
+        parent="menu_evaluacion_desempenos_module_root"
+        action="action_evaluacion_desempenos_employee"
+        groups="base.group_user"
+        sequence="20"
     />
 
 </odoo>
